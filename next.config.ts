@@ -11,9 +11,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  output: 'export',
+  output: 'standalone',
   distDir: 'out',
-  // basePath: process.env.NEXT_PUBLIC_SUB_PATH,
+  basePath: process.env.NEXT_PUBLIC_SUB_PATH,
 };
 
 export default nextConfig;

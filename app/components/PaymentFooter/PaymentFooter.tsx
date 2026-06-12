@@ -7,26 +7,28 @@ import { ALLOWED_OPERATORS, getOS } from '@/lib/client/utils';
 import { serverFetch } from '@/app/hooks/serverFetch';
 import './styles.css';
 
-const handleDeepLink = (opr: string) => {
-  const opratingSystem = getOS();
+const handleDeepLink = (opr: string, deepLinkUrl?: string) => {
+  const os = getOS();
 
-  const defaultIosUrl = `https://apps.apple.com/search?term=${opr}`;
-  const defaultWebUrl = `intent://search?q=${opr}#Intent;scheme=market;package=com.android.vending;end;`;
+  const iosStoreUrl = `https://apps.apple.com/search?term=${encodeURIComponent(opr)}`;
+  const androidStoreUrl = `intent://search?q=${opr}#Intent;scheme=market;package=com.android.vending;end;`;
 
-  let defaultUrl = defaultWebUrl;
+  const storeUrl = os === 'ios' ? iosStoreUrl : androidStoreUrl;
 
-  if (opratingSystem === 'ios') {
-    defaultUrl = defaultIosUrl;
-  } else if (opratingSystem === 'android') {
-    defaultUrl = defaultWebUrl;
+  if (deepLinkUrl) {
+    // 1. Attempt to open the app via deep link
+    window.location.href = deepLinkUrl;
+
+    // 2. If app didn't open (page still visible), fall back to store
+    setTimeout(() => {
+      if (!document.hidden) {
+        window.location.href = storeUrl;
+      }
+    }, 1500);
+  } else {
+    // No deep link — go straight to store
+    window.location.href = storeUrl;
   }
-
-  // fallback if app not installed
-  setTimeout(() => {
-    if (!document.hidden) {
-      window.location.href = defaultUrl;
-    }
-  }, 1000);
 };
 
 export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConfig }) => {
@@ -151,9 +153,13 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
       </div>
       <a
         ref={openAppRef}
-        href={oprSystem === 'ios' ? operatorResponse.deepLinkUrlIos : operatorResponse.deepLinkUrl}
-        onClick={() => {
-          handleDeepLink(operatorResponse.bankName);
+        href="#"
+        // href={oprSystem === 'ios' ? operatorResponse.deepLinkUrlIos : operatorResponse.deepLinkUrl}
+        onClick={(e) => {
+          e.preventDefault();
+          const deepLink =
+            oprSystem === 'ios' ? operatorResponse.deepLinkUrlIos : operatorResponse.deepLinkUrl;
+          handleDeepLink(operatorResponse.bankName, deepLink);
         }}
       >
         <Button

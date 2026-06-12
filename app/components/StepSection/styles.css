@@ -1,0 +1,43 @@
+/* screenshot frame (iPhone bezel) */
+.screenshot {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.screenshot .bezel {
+  position: relative;
+  aspect-ratio: 9 / 18;
+  width: 100%;
+  max-width: 100%;
+  /* max-height: calc(100dvh - 76px - 120px); */
+  border-radius: 40px;
+  background: #1a1a1a;
+  /* padding: 6px; */
+  box-shadow: 0 20px 60px oklch(0.22 0.015 255 / 0.3);
+  overflow: hidden;
+}
+
+.screenshot .bezel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  /* width: 50%;
+  height: 15px; */
+  background: #000;
+  border-radius: 0 0 30px 30px;
+  z-index: 10;
+}
+
+.screenshot .screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+}

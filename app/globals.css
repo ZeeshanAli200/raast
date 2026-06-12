@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --warm-ink: #632500;
+  --warm-orange: #cb6700;
+  --warm-orange-light: #ffebce;
+  --lightgreen: #bff4c9;
+  --lightblue: #deedfb;
+
+  /* text color */
+  --grey: #82878c;
+  --blackish: #161b22;
+  --darkgreen: #004400;
+
+  /* button colors */
+  --pale-blue: #2f628a;
+  --pale-blue-dark: #1f5781;
+  --strong-green: #00793d;
+  --strong-green-dark: #006b2e;
+
+  /* border color */
+  --warm-semibold: #cb670066;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-grey: var(--grey);
+  --color-blackish: var(--blackish);
+  --color-warm: var(--warm-ink);
+  --color-warm-medium: var(--warm-orange);
+  --color-warm-light: var(--warm-orange-light);
+  --color-dark-green: var(--darkgreen);
+  --color-light-green: var(--lightgreen);
+  --color-light-blue: var(--lightblue);
+
+  /* button colors */
+  --color-button-primary: var(--pale-blue);
+  --color-button-primary-dark: var(--pale-blue-dark);
+  --color-button-strong-green: var(--strong-green);
+  --color-button-strong-green-dark: var(--strong-green-dark);
+
+  /* border colors */
+  --color-border-warm: var(--warm-semibold);
+
+  /* fonts */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-int: var(--font-inter);
+  --font-jet-mono: var(--font-jetbrains-mono);
+
+  /* breakpoints */
+  --breakpoint-tablet: 900px;
+  --breakpoint-xsmall: 540px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}

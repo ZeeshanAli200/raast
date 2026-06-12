@@ -1,0 +1,8 @@
+.custom-btn-arrow .svg-arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.custom-btn-arrow:hover .svg-arrow {
+  transform: translateX(2px);
+}

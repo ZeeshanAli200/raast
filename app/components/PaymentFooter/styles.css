@@ -1,0 +1,8 @@
+.return-btn svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.return-btn:hover svg {
+  transform: translateX(2px);
+}

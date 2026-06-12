@@ -170,7 +170,6 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
         // href={oprSystem === 'ios' ? operatorResponse.deepLinkUrlIos : operatorResponse.deepLinkUrl}
         onClick={(e) => {
           e.preventDefault();
-          if (hasOpenedAppRef.current) return; // prevent double trigger
           hasOpenedAppRef.current = true;
           const deepLink =
             oprSystem === 'ios' ? operatorResponse.deepLinkUrlIos : operatorResponse.deepLinkUrl;

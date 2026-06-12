@@ -2,33 +2,25 @@ import { PaymentHeader } from './components/PaymentHeader/Payment-Header';
 import { PaymentFooter } from './components/PaymentFooter/PaymentFooter';
 import StepSection from './components/StepSection/StepSection';
 import StepsCarousel from './components/StepsCarousel/StepsCarousel';
-import { decodeParamJSON, getSecretKey } from '@/lib/server/utils';
+import { getSecretKey } from '@/lib/server/utils';
 import NotFoundComponent from './components/NotFound/NotFound';
-import { MongoResponse, SlideType } from '@/lib/types';
-import { serverFetch } from './hooks/serverFetch';
+import { BankConfig, SlideType } from '@/lib/types';
 
-export default async function Home({ searchParams }: { searchParams: { [key: string]: string } }) {
-  const params = await searchParams;
+export default async function Home() {
   // Fething and decoding the data param from the URL
-  const dataParams: string = params?.data ?? '';
 
   // decoding the data param from the URL
-  const operatorResponse = await decodeParamJSON(dataParams);
-  const key = await getSecretKey();
+  const operatorResponse: BankConfig = {
+    deepLinkUrl: 'https://jazzcash.page.link/XdUx',
+    redirectUrl: 'https://google.com/?transactionId=710511157&userKey=RAAST-test',
+    autoRedirectTimerSeconds: 10,
+    bankName: 'JazzCash (MFB)',
+    deepLinkUrlIos: 'https://apps.apple.com/pk/app/jazzcash-your-mobile-account/id1224617688',
+    transactionId: '710511157',
+  };
 
-  // fetching the steps data from the server
-  const { data: dataResponse } = await serverFetch<MongoResponse>(
-    process.env.NEXT_PUBLIC_BASE_URL +
-      '/api/raast/?bankName=' +
-      `${operatorResponse.bankName ?? ''}`,
-    {
-      headers: {
-        ['x-api-key']: key,
-      },
-    }
-  );
-  const data =
-    dataResponse?.response?.steps?.sort((a: SlideType, b: SlideType) => a.step - b.step) ?? [];
+  const data: SlideType[] = [];
+  // dataResponse?.response?.steps?.sort((a: SlideType, b: SlideType) => a.step - b.step) ?? [];
 
   if (!operatorResponse.transactionId) {
     return <NotFoundComponent text="The link you used is invalid or has expired." />;

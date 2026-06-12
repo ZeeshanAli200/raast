@@ -48,6 +48,7 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
 
   // Open App Button Ref
   const openAppRef = useRef<HTMLAnchorElement>(null);
+  const hasOpenedAppRef = useRef(false);
 
   // Auto redirect logic handled through ref
   const canAutoRedirectRef = useRef(false);
@@ -84,7 +85,8 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
     onFinish() {
       if (
         (operatorResponse.deepLinkUrl || operatorResponse.deepLinkUrlIos) &&
-        canAutoRedirectRef.current
+        canAutoRedirectRef.current &&
+        !hasOpenedAppRef.current
       ) {
         if (oprSystem !== 'ios' && oprSystem !== 'android') return;
         openAppRef?.current?.click();
@@ -168,6 +170,8 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
         // href={oprSystem === 'ios' ? operatorResponse.deepLinkUrlIos : operatorResponse.deepLinkUrl}
         onClick={(e) => {
           e.preventDefault();
+          if (hasOpenedAppRef.current) return; // prevent double trigger
+          hasOpenedAppRef.current = true;
           const deepLink =
             oprSystem === 'ios' ? operatorResponse.deepLinkUrlIos : operatorResponse.deepLinkUrl;
           handleDeepLink(operatorResponse.bankName, deepLink);

@@ -16,17 +16,28 @@ const handleDeepLink = (opr: string, deepLinkUrl?: string) => {
   const storeUrl = os === 'ios' ? iosStoreUrl : androidStoreUrl;
 
   if (deepLinkUrl) {
-    // 1. Attempt to open the app via deep link
     window.location.href = deepLinkUrl;
 
-    // 2. If app didn't open (page still visible), fall back to store
-    setTimeout(() => {
-      if (!document.hidden) {
-        window.location.href = storeUrl;
-      }
+    const fallbackTimer = setTimeout(() => {
+      window.location.href = storeUrl;
     }, 1500);
+
+    // If user comes back to the page, the app opened — cancel the fallback
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        // App opened, user left the browser — cancel store redirect
+        clearTimeout(fallbackTimer);
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    // Clean up listener after 3s regardless
+    setTimeout(() => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    }, 3000);
   } else {
-    // No deep link — go straight to store
     window.location.href = storeUrl;
   }
 };

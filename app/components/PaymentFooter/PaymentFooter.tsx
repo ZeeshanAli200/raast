@@ -3,7 +3,7 @@ import { useCountdown } from '@/app/hooks/useCountdown';
 import { useEffect, useMemo, useRef } from 'react';
 import Button from '../button/button';
 import { BankConfig, Inquire, InquireStatusEnum } from '@/lib/types';
-import { ALLOWED_OPERATORS, getOS } from '@/lib/client/utils';
+import { getOS } from '@/lib/client/utils';
 import { serverFetch } from '@/app/hooks/serverFetch';
 import './styles.css';
 
@@ -61,22 +61,20 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
     initialTime,
     // when 2 seconds are left, we will check the status of the transaction and if it's still pending, we can allow auto redirect
     async onTwoSecondsLeft() {
-      canAutoRedirectRef.current = true;
-      return;
       if (operatorResponse.deepLinkUrl || operatorResponse.deepLinkUrlIos) {
         if (oprSystem !== 'ios' && oprSystem !== 'android') return;
-        const { data: inquireData } =
-          operatorResponse.transactionId && ALLOWED_OPERATORS?.includes(operatorResponse.bankName)
-            ? await serverFetch<Inquire>(
-                process.env.NEXT_PUBLIC_INQUIRE_BASE_URL + '/userguide/inquire',
-                {
-                  body: JSON.stringify({
-                    transactionId: operatorResponse.transactionId.toString() ?? '',
-                  }),
-                  method: 'POST',
-                }
-              )
-            : { data: null };
+        // && ALLOWED_OPERATORS?.includes(operatorResponse.bankName)
+        const { data: inquireData } = operatorResponse.transactionId
+          ? await serverFetch<Inquire>(
+              process.env.NEXT_PUBLIC_INQUIRE_BASE_URL + '/userguide/inquire',
+              {
+                body: JSON.stringify({
+                  transactionId: operatorResponse.transactionId.toString() ?? '',
+                }),
+                method: 'POST',
+              }
+            )
+          : { data: null };
 
         if (inquireData?.status === InquireStatusEnum.PENDING) canAutoRedirectRef.current = true;
       }
@@ -108,16 +106,19 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
   const deeplink = operatorResponse.deepLinkUrl || operatorResponse.deepLinkUrlIos;
 
   const timerText = isWarning ? 'Redirecting to bank app' : 'Auto-redirect to bank app in';
+  const isMobileAndHasDeepLink = deeplink && (oprSystem === 'ios' || oprSystem === 'android');
+  const IsTimerInSecondsGreaterThanZero = operatorResponse.autoRedirectTimerSeconds > 0;
+
   // console.log({ operatorResponse });
 
   return (
     <div
       className={
         'flex items-center gap-2 px-6 py-4 tablet:px-12 ' +
-        `${isWarning && deeplink ? ' bg-warm-light border-t border-border-warm tablet:border-t-0 tablet:bg-white' : 'bg-white'}`
+        `${isWarning && isMobileAndHasDeepLink && IsTimerInSecondsGreaterThanZero ? ' bg-warm-light border-t border-border-warm tablet:border-t-0 tablet:bg-white' : 'bg-white'}`
       }
     >
-      {deeplink && (
+      {isMobileAndHasDeepLink && IsTimerInSecondsGreaterThanZero && (
         <div className="flex-1 tablet:hidden">
           <p
             className={
@@ -167,7 +168,6 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
       <a
         ref={openAppRef}
         href="#"
-        // href={oprSystem === 'ios' ? operatorResponse.deepLinkUrlIos : operatorResponse.deepLinkUrl}
         onClick={(e) => {
           e.preventDefault();
           hasOpenedAppRef.current = true;
@@ -177,7 +177,10 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
         }}
       >
         <Button
-          className={`${deeplink ? '' : '!hidden'}` + ' tablet:hidden'}
+          className={
+            `${isMobileAndHasDeepLink && IsTimerInSecondsGreaterThanZero ? '' : '!hidden'}` +
+            ' tablet:hidden'
+          }
           text="Open Now"
           variant="success"
           showArrowIcon
@@ -185,7 +188,11 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
       </a>
       <a
         href={operatorResponse.redirectUrl}
-        className={deeplink ? 'hidden tablet:inline-block' : 'w-full tablet:w-fit'}
+        className={
+          isMobileAndHasDeepLink && IsTimerInSecondsGreaterThanZero
+            ? 'hidden tablet:inline-block'
+            : 'w-full tablet:w-fit'
+        }
       >
         <Button
           className={'w-full text-center justify-center tablet:!inline-flex'}

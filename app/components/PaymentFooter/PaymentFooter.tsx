@@ -67,6 +67,8 @@ export const PaymentFooter = ({
     initialTime,
     // when 2 seconds are left, we will check the status of the transaction and if it's still pending, we can allow auto redirect
     async onTwoSecondsLeft() {
+      canAutoRedirectRef.current = true;
+      return;
       if (operatorResponse.deepLinkUrl || operatorResponse.deepLinkUrlIos) {
         if (oprSystem !== 'ios' && oprSystem !== 'android') return;
         // && ALLOWED_OPERATORS?.includes(operatorResponse.bankName)

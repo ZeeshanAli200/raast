@@ -42,9 +42,15 @@ const handleDeepLink = (opr: string, deepLinkUrl?: string) => {
   }
 };
 
-export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConfig }) => {
+export const PaymentFooter = ({
+  operatorResponse,
+  platform,
+}: {
+  platform: string;
+  operatorResponse: BankConfig;
+}) => {
   // detecting the operating system of the user
-  const oprSystem = getOS();
+  const oprSystem = platform;
 
   // Open App Button Ref
   const openAppRef = useRef<HTMLAnchorElement>(null);
@@ -108,7 +114,6 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
   const timerText = isWarning ? 'Redirecting to bank app' : 'Auto-redirect to bank app in';
   const isMobileAndHasDeepLink = deeplink && oprSystem !== 'web';
   const IsTimerInSecondsGreaterThanZero = operatorResponse.autoRedirectTimerSeconds > 0;
-  // console.log({ oprSystem });
 
   // console.log({ operatorResponse });
 

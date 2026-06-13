@@ -2,12 +2,14 @@ import { PaymentHeader } from './components/PaymentHeader/Payment-Header';
 import { PaymentFooter } from './components/PaymentFooter/PaymentFooter';
 import StepSection from './components/StepSection/StepSection';
 import StepsCarousel from './components/StepsCarousel/StepsCarousel';
-import { getSecretKey } from '@/lib/server/utils';
+import { headers } from 'next/headers';
 import NotFoundComponent from './components/NotFound/NotFound';
 import { BankConfig, SlideType } from '@/lib/types';
 
 export default async function Home() {
-  // Fething and decoding the data param from the URL
+  // Fetching and decoding the data param from the URL
+  const platform = (await headers()).get('x-os-platform') ?? 'web';
+  console.log({ platform });
 
   // decoding the data param from the URL
   const operatorResponse: BankConfig = {
@@ -56,7 +58,7 @@ export default async function Home() {
         </div>
       </div>
       <div className="sticky bottom-0 w-full shadow-2xl">
-        <PaymentFooter operatorResponse={operatorResponse} />
+        <PaymentFooter operatorResponse={operatorResponse} platform={platform} />
       </div>
     </div>
   );

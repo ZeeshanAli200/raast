@@ -1,5 +1,5 @@
 export const getOS = () => {
-  if (typeof window === 'undefined') return 'server';
+  // if (typeof window === 'undefined') return 'server';
 
   const userAgent = navigator.userAgent || navigator.vendor;
 

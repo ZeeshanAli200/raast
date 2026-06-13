@@ -106,8 +106,9 @@ export const PaymentFooter = ({ operatorResponse }: { operatorResponse: BankConf
   const deeplink = operatorResponse.deepLinkUrl || operatorResponse.deepLinkUrlIos;
 
   const timerText = isWarning ? 'Redirecting to bank app' : 'Auto-redirect to bank app in';
-  const isMobileAndHasDeepLink = deeplink && (oprSystem === 'ios' || oprSystem === 'android');
+  const isMobileAndHasDeepLink = deeplink && oprSystem !== 'web';
   const IsTimerInSecondsGreaterThanZero = operatorResponse.autoRedirectTimerSeconds > 0;
+  // console.log({ oprSystem });
 
   // console.log({ operatorResponse });
 
